@@ -1,0 +1,36 @@
+#!/bin/bash
+#Check_MK notifications to RocketChat
+
+MY_CHECK_MK="http://192.168.48.215/monit"
+MY_ROCKET_CHAT="https://pozitiff.chat/hooks/iQYNqW9HjNzgvzEdG/YTDHXybuYJLWp8fmMEXbeJLCbH2ZqxibdbavkZsri43aSrn5"
+
+#Set the message icon based on Check_mk service state
+if [ "$NOTIFY_SERVICESTATE" = "CRITICAL" ]
+then
+    ICON=":exclamation:"
+elif [ "$NOTIFY_SERVICESTATE" = "WARNING" ]
+then
+    ICON=":warning:"
+elif [ "$NOTIFY_SERVICESTATE" = "OK" ]
+then
+    ICON=":white_check_mark:"
+elif [ "$NOTIFY_SERVICESTATE" = "UNKNOWN" ]
+then
+    ICON=":question:"
+elif [ "$NOTIFY_HOSTSTATE" = "DOWN" ]
+then
+    ICON=":bangbang:"
+elif [ "$NOTIFY_HOSTSTATE" = "UP" ]
+then
+    ICON=":white_check_mark:"
+else
+    ICON=":grey_exclamation:"
+fi
+
+#Send message to RocketChat
+
+if [ "$NOTIFY_WHAT" == "HOST" ]; then
+    curl -X POST --data "payload={ \"text\": \"${ICON} $NOTIFY_HOSTSTATE \n Host: $NOTIFY_HOSTNAME  ($NOTIFY_HOSTADDRESS) \n Date / Time: $NOTIFY_SHORTDATETIME \n Output: *$NOTIFY_HOSTOUTPUT* \n <$MY_CHECK_MK/|more info>\"}" $MY_ROCKET_CHAT
+else
+    curl -X POST --data "payload={ \"text\": \"${ICON} $NOTIFY_SERVICESTATE \n Host: $NOTIFY_HOSTNAME \n  Service: $NOTIFY_SERVICEDESC \n Date / Time: $NOTIFY_SHORTDATETIME \n Output: *$NOTIFY_SERVICEOUTPUT* \n <$MY_CHECK_MK/|more info>\"}" $MY_ROCKET_CHAT
+fi

@@ -1,0 +1,11 @@
+#!/bin/bash
+#Created by Christian Schuster and Tobias Orth.
+#This script is used to get check_mk notifications in RocketChat
+
+#Modify these variables for your environment
+MY_CHECK_MK="http://192.168.48.215/monit"
+MY_ROCKET_CHAT="https://pozitiff.chat/hooks/iQYNqW9HjNzgvzEdG/YTDHXybuYJLWp8fmMEXbeJLCbH2ZqxibdbavkZsri43aSrn5"
+
+#Send message to RocketChat
+curl -X POST --data-urlencode "payload={ \"text\": \"  HOST: $HOST$   SERVICE: $APPLICATION$   MESSAGE: $TEXT$ <$MY_CHECK_MK/|more info>\"}" $MY_ROCKET_CHAT
+
